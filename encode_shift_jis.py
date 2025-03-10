@@ -6,7 +6,7 @@ MEMORY_START = 0
 MEMORY_END = 1000000
 
 
-def encode_shift_jis(text, mame_format=False):
+def encode_shift_jis(text: str, mame_format: str = False) -> str:
     """Encodes text into Shift JIS hex and optionally formats it for MAME."""
     shift_jis_bytes = text.encode("shift_jis")
     hex_output = shift_jis_bytes.hex()
@@ -20,7 +20,7 @@ def encode_shift_jis(text, mame_format=False):
         return " ".join(byte_pairs)
 
 
-def decode_shift_jis(hex_string):
+def decode_shift_jis(hex_string: str) -> str:
     """Decodes a Shift JIS hex sequence back into readable text."""
     try:
         # Normalize hex string: remove spaces, convert to lowercase
