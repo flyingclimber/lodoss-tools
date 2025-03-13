@@ -20,11 +20,16 @@ def encode_shift_jis(text: str, mame_format: str = False) -> str:
         return " ".join(byte_pairs)
 
 
-def decode_shift_jis(hex_string: str) -> str:
+def decode_shift_jis(hex_string: str = None, filename = None) -> str:
     """Decodes a Shift JIS hex sequence back into readable text."""
     try:
-        # Normalize hex string: remove spaces, convert to lowercase
-        hex_string = hex_string.replace(" ", "").lower()
+        if filename:
+            with open(filename, 'rb') as f:
+                hex_string = f.read().hex()
+        elif hex_string:
+            hex_string = hex_string.replace(" ", "").lower()
+        else:
+            return "Need either hex string or filename"
 
         # Ensure hex_string has an even length
         if len(hex_string) % 2 != 0:
@@ -43,13 +48,17 @@ def decode_shift_jis(hex_string: str) -> str:
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Convert text to Shift JIS hex (and vice versa).")
-    parser.add_argument("text", help="Text to encode or hex to decode")
+    parser.add_argument("text", nargs="?", help="Text to encode or hex to decode")
     parser.add_argument("--mame", action="store_true", help="Output in MAME find format")
     parser.add_argument("--decode", action="store_true", help="Decode a Shift JIS hex sequence back to text")
+    parser.add_argument("--filename", help="Input file" )
 
     args = parser.parse_args()
 
+    if args.decode and not args.text and not args.filename:
+        parser.error("You must provide either --filename or a hex string for decoding.")
+
     if args.decode:
-        print(decode_shift_jis(args.text))
+        print(decode_shift_jis(args.text, args.filename))
     else:
         print(encode_shift_jis(args.text, args.mame))
